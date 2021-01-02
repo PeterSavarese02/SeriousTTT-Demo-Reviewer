@@ -5,7 +5,7 @@ using System.Windows.Input;
 using System.IO;
 using System.Collections.Generic;
 using System;
-using Microsoft.Win32;
+using Ookii.Dialogs.Wpf;
 
 namespace SeriousTTT_Demo_Reviewer
 {
@@ -21,7 +21,20 @@ namespace SeriousTTT_Demo_Reviewer
             InitializeComponent();
         }
 
-        public void processDemo(string sPath)
+        public class DemoInfo
+        {
+            public string fileName { get; set; }
+            public string server { get; set; }
+            public string mapName { get; set; }
+            public string demoStart { get; set; }
+            public string demoEnd { get; set; }
+        }
+
+        /// <summary>
+        ///  Handles filepath of a demo and adds it to the data grid
+        /// </summary>
+        /// <param name="sPath">Full file path + filename + extension of the demo file to read</param>
+        public void processDemoAndAddToList(string sPath)
         {
             Dictionary<string, string> serverIpToName = new Dictionary<string, string>();
 
@@ -48,8 +61,6 @@ namespace SeriousTTT_Demo_Reviewer
             var demoReader = new DemoReader(sPath);
             demoReader.ReadHeader();
 
-            Console.WriteLine(demoReader.Header.Header);
-
             string sServerName;
 
             if (serverIpToName.ContainsKey(demoReader.Header.ServerName))
@@ -60,9 +71,17 @@ namespace SeriousTTT_Demo_Reviewer
                 sServerName = demoReader.Header.ServerName + " | (ERROR RESOLVING IP TO SERIOUS GMOD SERVER NAME";
             }
 
-            demoFileInfo.Text = string.Format("Demo Start: {0}\nDemo End: {1}\nServer: {2}\nMap: {3}", File.GetCreationTime(sPath), File.GetLastWriteTime(sPath), sServerName, demoReader.Header.MapName);
+            string[] explodedFilePath = sPath.Split('\\');
+            string sFileName = explodedFilePath[explodedFilePath.Length - 1]; // The last '\' is the file name
 
-            MessageBox.Show("Demo loaded and displayed");
+            DemoInfo demoInfo = new DemoInfo();
+            demoInfo.fileName = sFileName;
+            demoInfo.server = sServerName;
+            demoInfo.mapName = demoReader.Header.MapName;
+            demoInfo.demoStart = File.GetCreationTime(sPath).ToString();
+            demoInfo.demoEnd = File.GetLastWriteTime(sPath).ToString();
+
+            dataFromDemoFolder.Items.Add(demoInfo);
         }
 
         /// <summary>
@@ -74,23 +93,44 @@ namespace SeriousTTT_Demo_Reviewer
         {
             if (e.Key == Key.Return)
             {
-                processDemo(demoFileName.Text);
+                // processDemoAndAddToList(demoFileName.Text);
             }
+        }
+        
+        private void copyPlayConsoleCommand_Click(object sender, RoutedEventArgs e)
+        {
+            int iSelectedIndex = dataFromDemoFolder.SelectedIndex;
+            DemoInfo currentlySelectedRow = dataFromDemoFolder.SelectedItem as DemoInfo;
+            Clipboard.SetDataObject("playdemo garrysmod\\demos\\" + currentlySelectedRow.fileName);
+            MessageBox.Show("Console command copied to clipboard! Paste into your GMod console");
         }
 
         private void selectDemoFile_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.Multiselect = false;
-            fileDialog.Filter = "Demo files |*.dem";
+            var folderBrowser = new VistaFolderBrowserDialog();
 
-            Nullable<bool> result = fileDialog.ShowDialog();
-
-            if (result == true)
+            bool? success = folderBrowser.ShowDialog();
+            if (success == true)
             {
-                string sFilePath = fileDialog.FileName;
-                demoFileName.Text = sFilePath;
-                processDemo(sFilePath);
+                // Clear out datagrid just incase we had any previous loaded folders
+                dataFromDemoFolder.Items.Clear();
+                currentDemoPathTextBbox.Text = folderBrowser.SelectedPath;
+
+                string[] fileEntries = Directory.GetFiles(folderBrowser.SelectedPath);
+
+                foreach(string sFile in fileEntries)
+                {
+                    string sFileExtension = sFile.Substring(sFile.Length - 4);
+
+                    if (sFileExtension != ".dem")
+                    {
+                        continue; // This file isn't a demo. Continue to our next file
+                    }
+
+                    processDemoAndAddToList(sFile);
+                }
+
+                MessageBox.Show("Folder has been processed and all demos in the contained folder have been loaded and displayed");
             }
         }
     }
