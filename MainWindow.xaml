@@ -5,8 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SeriousTTT_Demo_Reviewer"
         mc:Ignorable="d"
-        Title="Serious GMod Demo Reviewer" Height="500" Width="800"
+        AllowsTransparency="False"
+        Title="Serious GMod Demo Reviewer" MinHeight="500" MinWidth="800"
         Icon="img/logo.ico">
+
+    <Window.Effect>
+        <DropShadowEffect ShadowDepth="8" Opacity="0.5"/>
+    </Window.Effect>
+
     <Grid>
         <!-- Main Program Container -->
         <StackPanel Margin="20 5 20 0">
