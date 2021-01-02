@@ -1,0 +1,15 @@
+﻿<Window x:Class="SeriousTTT_Demo_Reviewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SeriousTTT_Demo_Reviewer"
+        mc:Ignorable="d"
+        Title="Serious TTT Demo Reviewer" Height="200" Width="800"
+        Icon="img/logo.ico">
+    <Grid>
+        <TextBox x:Name="demoFileName" KeyDown="demoFileName_KeyDown" HorizontalAlignment="Left" Height="23" Margin="21,10,0,0" TextWrapping="Wrap" Text="Please select a demo" VerticalAlignment="Top" Width="640"/>
+        <TextBlock x:Name="demoFileInfo" Text="No current demo loaded" Margin="21,50,132.6,10.4" />
+        <Button x:Name="selectDemoFile" Click="selectDemoFile_Click" Content="Select Demo" HorizontalAlignment="Left" Margin="673,10,0,0" VerticalAlignment="Top" Width="75" Height="23"/>
+    </Grid>
+</Window>
