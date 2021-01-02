@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SeriousTTT_Demo_Reviewer"
         mc:Ignorable="d"
-        Title="Serious TTT Demo Reviewer" Height="200" Width="800"
+        Title="Serious GMod Demo Reviewer" Height="200" Width="800"
         Icon="img/logo.ico">
     <Grid>
         <TextBox x:Name="demoFileName" KeyDown="demoFileName_KeyDown" HorizontalAlignment="Left" Height="23" Margin="21,10,0,0" TextWrapping="Wrap" Text="Please select a demo" VerticalAlignment="Top" Width="640"/>
